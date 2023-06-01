@@ -1,0 +1,25 @@
+{
+  "name": "demo-webstore-api",
+  "version": "1.0.0",
+  "description": "initial edit",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ka-Q/demo-webstore-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ka-Q/demo-webstore-api/issues"
+  },
+  "homepage": "https://github.com/Ka-Q/demo-webstore-api#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "node": "^20.2.0",
+    "nodemon": "^2.0.22"
+  }
+}
