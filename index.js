@@ -1,4 +1,5 @@
 const express = require('express');
+const getProduct = require('./api/product_functions');
 
 const app = express();
 
@@ -11,7 +12,11 @@ app.get('/', (req, res) => {
 })
 
 app.get('/api', (req, res) => {
-    res.json({data: "data"});
+    res.json({data: "no path"});
+})
+
+app.get('/api/product', (req, res) => {
+    getProduct(req, res);
 })
 
 module.exports = app;
