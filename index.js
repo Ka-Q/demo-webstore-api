@@ -2,6 +2,7 @@ const express = require('express');
 const ProductFunctions = require('./api/ProductFunctions');
 const ManufacturerFunctions = require('./api/ManufacturerFunctions');
 const AddressFunctions = require('./api/AddressFunctions');
+const UserFunctions = require('./api/UserFunctions');
 
 const app = express();
 
@@ -65,6 +66,20 @@ app.put('/api/address', (req, res) => {
 });
 app.delete('/api/address', (req, res) => {
     AddressFunctions.deleteAddress(req, res);
+});
+
+// USER
+app.get('/api/user', (req, res) => {
+    UserFunctions.getUser(req, res);
+});
+app.post('/api/user', (req, res) => {
+    UserFunctions.postUser(req, res);
+});
+app.put('/api/user', (req, res) => {
+    UserFunctions.putUser(req, res);
+});
+app.delete('/api/user', (req, res) => {
+    UserFunctions.deleteUser(req, res);
 });
 
 module.exports = app;
