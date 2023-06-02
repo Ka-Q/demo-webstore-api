@@ -1,6 +1,7 @@
 const express = require('express');
 const ProductFunctions = require('./api/ProductFunctions');
 const ManufacturerFunctions = require('./api/ManufacturerFunctions');
+const AddressFunctions = require('./api/AddressFunctions');
 
 const app = express();
 
@@ -50,6 +51,20 @@ app.put('/api/manufacturer', (req, res) => {
 });
 app.delete('/api/manufacturer', (req, res) => {
     ManufacturerFunctions.deleteManufacturer(req, res);
+});
+
+// ADDRESS
+app.get('/api/address', (req, res) => {
+    AddressFunctions.getAddress(req, res);
+});
+app.post('/api/address', (req, res) => {
+    AddressFunctions.postAddress(req, res);
+});
+app.put('/api/address', (req, res) => {
+    AddressFunctions.putAddress(req, res);
+});
+app.delete('/api/address', (req, res) => {
+    AddressFunctions.deleteAddress(req, res);
 });
 
 module.exports = app;
