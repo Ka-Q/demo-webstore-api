@@ -1,5 +1,6 @@
 const express = require('express');
 const ProductFunctions = require('./api/ProductFunctions');
+const ManufacturerFunctions = require('./api/ManufacturerFunctions');
 
 const app = express();
 
@@ -35,6 +36,20 @@ app.put('/api/product', (req, res) => {
 });
 app.delete('/api/product', (req, res) => {
     ProductFunctions.deleteProduct(req, res);
+});
+
+// MANUFACTURER
+app.get('/api/manufacturer', (req, res) => {
+    ManufacturerFunctions.getManufacturer(req, res);
+});
+app.post('/api/manufacturer', (req, res) => {
+    ManufacturerFunctions.postManufacturer(req, res);
+});
+app.put('/api/manufacturer', (req, res) => {
+    ManufacturerFunctions.putManufacturer(req, res);
+});
+app.delete('/api/manufacturer', (req, res) => {
+    ManufacturerFunctions.deleteManufacturer(req, res);
 });
 
 module.exports = app;
