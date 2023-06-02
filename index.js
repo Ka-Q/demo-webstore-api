@@ -1,9 +1,11 @@
 const express = require('express');
-const getProduct = require('./api/product_functions');
+const ProductFunctions = require('./api/ProductFunctions');
 
 const app = express();
 
 const PORT = 5000;
+
+app.use(express.json());
 
 app.listen(PORT, () => {console.log(`App running in port ${PORT}`)});
 
@@ -16,7 +18,11 @@ app.get('/api', (req, res) => {
 })
 
 app.get('/api/product', (req, res) => {
-    getProduct(req, res);
+    ProductFunctions.getProduct(req, res);
+})
+
+app.post('/api/product', (req, res) => {
+    ProductFunctions.postProduct(req, res);
 })
 
 module.exports = app;
