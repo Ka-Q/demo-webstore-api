@@ -1,6 +1,6 @@
 require('dotenv').config()
 const mysql = require('mysql2');
-const { generateGetSQL, generatePostSQL } = require('./SQLGenerators');
+const { generateGetSQL, generatePostSQL, generatePutSQL, generateDeleteSQL } = require('./SQLGenerators');
 
 const connect = (res, queryJSON) => {
     const connection = mysql.createConnection(process.env.DATABASE_URL)
@@ -26,4 +26,14 @@ const postProduct = (req, res) => {
     connect(res, queryJSON);
 };
 
-module.exports = {getProduct, postProduct}
+const putProduct = (req, res) => {
+    let queryJSON = generatePutSQL('product', req);
+    connect(res, queryJSON);
+};
+
+const deleteProduct = (req, res) => {
+    let queryJSON = generateDeleteSQL('product', req);
+    connect(res, queryJSON);
+};
+
+module.exports = {getProduct, postProduct, putProduct, deleteProduct}

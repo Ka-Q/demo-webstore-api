@@ -9,6 +9,7 @@ app.use(express.json());
 
 app.listen(PORT, () => {console.log(`App running in port ${PORT}`)});
 
+// ROOT
 app.get('/', (req, res) => {
     let HTML = "<div> <h1>Demo webstore API</h1> </div> <div> <h3>WIP by Aku Laurila</h3> </div>"+
     "<div> <p>An express API for use with a demo webstore.</p> </div>" +
@@ -28,6 +29,12 @@ app.get('/api/product', (req, res) => {
 });
 app.post('/api/product', (req, res) => {
     ProductFunctions.postProduct(req, res);
+});
+app.put('/api/product', (req, res) => {
+    ProductFunctions.putProduct(req, res);
+});
+app.delete('/api/product', (req, res) => {
+    ProductFunctions.deleteProduct(req, res);
 });
 
 module.exports = app;
