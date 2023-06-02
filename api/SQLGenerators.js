@@ -18,10 +18,10 @@ const generateDeleteSQL = (table, req) => {
 }
 
 const generatePutSQL = (table, req) => {
-    let params = req.body.data;
+    let params = req.body.set;
     let keys = Object.keys(params);
 
-    let idParams = req.body.on;
+    let idParams = req.body.where;
     let idKeys = Object.keys(idParams);
 
     let query = "UPDATE " + table + " SET";
