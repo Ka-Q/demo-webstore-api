@@ -69,13 +69,13 @@ app.delete('/api/manufacturer', (req, res) => {
 });
 
 // MANUFACTURER PRODUCTS   requires manufacturer_id
-app.get('/api/product_manufacturer', (req, res) => {
+app.get('/api/manufacturer_product', (req, res) => {
     ManufacturerFunctions.getManufacturerProduct(req, res);
 });
-app.post('/api/product_manufacturer', (req, res) => {
+app.post('/api/manufacturer_product', (req, res) => {
     ManufacturerFunctions.postManufacturerProduct(req, res);
 });
-app.delete('/api/product_manufacturer', (req, res) => {
+app.delete('/api/manufacturer_product', (req, res) => {
     ManufacturerFunctions.deleteManufacturerProduct(req, res);
 });
 
