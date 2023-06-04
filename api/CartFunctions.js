@@ -5,7 +5,7 @@ const { generatePostSQL, generatePutSQL, generateDeleteSQL } = require('./SQLGen
 const getCart = (req, res) => {
     let params = req.query;
     let keys = Object.keys(params);
-    let query = "SELECT * FROM cart_entry JOIN product ON product_product_id = product_id WHERE (1=1)";
+    let query = "SELECT * FROM cart_entry JOIN product ON cart_entry.product_id = product.product_id WHERE (1=1)";
 
     let queryList = [];
 
@@ -81,11 +81,11 @@ const deleteFromCart = (req, res) => {
 
 
 const deleteCart = (req, res) => {
-    let userID = req.body.user_id || req.body.user_user_id;
+    let userID = req.body.user_id;
 
     if (!userID) res.json({error: 'error'})
 
-    let query = "DELETE FROM cart_entry WHERE (user_user_id = ?)";
+    let query = "DELETE FROM cart_entry WHERE (user_id = ?)";
 
     let queryList = [];
     queryList.push(userID);
