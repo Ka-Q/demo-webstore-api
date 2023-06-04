@@ -5,6 +5,7 @@ const AddressFunctions = require('./api/AddressFunctions');
 const UserFunctions = require('./api/UserFunctions');
 const WishlistFunctions = require('./api/WishlistFunctions');
 const CartFunctions = require('./api/CartFunctions');
+const ReviewFunctions = require('./api/ReviewFunctions');
 
 const app = express();
 
@@ -117,6 +118,20 @@ app.put('/api/user_cart_entry', (req, res) => {
 });
 app.delete('/api/user_cart_entry', (req, res) => {
     CartFunctions.deleteFromCart(req, res);
+});
+
+// REVIEW
+app.get('/api/product_review', (req, res) => {
+    ReviewFunctions.getReview(req, res);
+});
+app.post('/api/product_review', (req, res) => {
+    ReviewFunctions.postReview(req, res);
+});
+app.put('/api/product_review', (req, res) => {
+    ReviewFunctions.putReview(req, res);
+});
+app.delete('/api/product_review', (req, res) => {
+    ReviewFunctions.deleteReview(req, res);
 });
 
 module.exports = app;
