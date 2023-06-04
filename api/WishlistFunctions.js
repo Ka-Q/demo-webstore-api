@@ -88,9 +88,8 @@ const deleteFromWishlist = (req, res) => {
 
 const deleteWishlist = (req, res) => {
     let userID = req.body.user_id || req.body.user_user_id;
-    let products = req.body.products;
 
-    if (!userID || !products) res.json({error: 'error'})
+    if (!userID) res.json({error: 'error'})
 
     let query = "DELETE FROM wishlist WHERE (user_user_id = ?)";
 
