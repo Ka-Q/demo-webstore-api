@@ -93,10 +93,10 @@ app.delete('/api/user_wishlist', (req, res) => {
 });
 
 // WISHLIST PRODUCTS post and delete
-app.post('/api/user_wishlist_products', (req, res) => {
+app.post('/api/user_wishlist_product', (req, res) => {
     WishlistFunctions.postToWishlist(req, res);
 });
-app.delete('/api/user_wishlist_products', (req, res) => {
+app.delete('/api/user_wishlist_product', (req, res) => {
     WishlistFunctions.deleteFromWishlist(req, res);
 });
 
@@ -109,13 +109,13 @@ app.delete('/api/user_cart', (req, res) => {
 });
 
 //CART ENTRIES post, put and delete
-app.post('/api/user_cart_entries', (req, res) => {
+app.post('/api/user_cart_entry', (req, res) => {
     CartFunctions.postToCart(req, res);
 });
-app.put('/api/user_cart_entries', (req, res) => {
+app.put('/api/user_cart_entry', (req, res) => {
     CartFunctions.putToCart(req, res);
 });
-app.delete('/api/user_cart_entries', (req, res) => {
+app.delete('/api/user_cart_entry', (req, res) => {
     CartFunctions.deleteFromCart(req, res);
 });
 
