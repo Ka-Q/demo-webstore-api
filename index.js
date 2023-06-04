@@ -3,6 +3,7 @@ const ProductFunctions = require('./api/ProductFunctions');
 const ManufacturerFunctions = require('./api/ManufacturerFunctions');
 const AddressFunctions = require('./api/AddressFunctions');
 const UserFunctions = require('./api/UserFunctions');
+const WishlistFunctions = require('./api/WishlistFunctions');
 
 const app = express();
 
@@ -80,6 +81,22 @@ app.put('/api/user', (req, res) => {
 });
 app.delete('/api/user', (req, res) => {
     UserFunctions.deleteUser(req, res);
+});
+
+// WISHLIST
+app.get('/api/user_wishlist', (req, res) => {
+    WishlistFunctions.getWishlist(req, res);
+});
+app.delete('/api/user_wishlist', (req, res) => {
+    WishlistFunctions.deleteWishlist(req, res);
+});
+
+// WISHLIST PRODUCTS
+app.post('/api/user_wishlist_products', (req, res) => {
+    WishlistFunctions.postToWishlist(req, res);
+});
+app.delete('/api/user_wishlist_products', (req, res) => {
+    WishlistFunctions.deleteFromWishlist(req, res);
 });
 
 module.exports = app;
