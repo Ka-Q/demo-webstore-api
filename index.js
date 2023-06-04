@@ -4,6 +4,7 @@ const ManufacturerFunctions = require('./api/ManufacturerFunctions');
 const AddressFunctions = require('./api/AddressFunctions');
 const UserFunctions = require('./api/UserFunctions');
 const WishlistFunctions = require('./api/WishlistFunctions');
+const CartFunctions = require('./api/CartFunctions');
 
 const app = express();
 
@@ -97,6 +98,25 @@ app.post('/api/user_wishlist_products', (req, res) => {
 });
 app.delete('/api/user_wishlist_products', (req, res) => {
     WishlistFunctions.deleteFromWishlist(req, res);
+});
+
+// CART
+app.get('/api/user_cart', (req, res) => {
+    CartFunctions.getCart(req, res);
+});
+app.delete('/api/user_cart', (req, res) => {
+    CartFunctions.deleteCart(req, res);
+});
+
+//CART ENTRIES post, put and delete
+app.post('/api/user_cart_entries', (req, res) => {
+    CartFunctions.postToCart(req, res);
+});
+app.put('/api/user_cart_entries', (req, res) => {
+    CartFunctions.putToCart(req, res);
+});
+app.delete('/api/user_cart_entries', (req, res) => {
+    CartFunctions.deleteFromCart(req, res);
 });
 
 module.exports = app;
