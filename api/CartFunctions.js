@@ -38,7 +38,6 @@ const postToCart = (req, res) => {
         if (!err) {
             res.json({data: results});
         } else {
-            console.log(err);
             res.status(400);
             res.json({data: "error"});
         }
@@ -55,7 +54,6 @@ const putToCart = (req, res) => {
         if (!err) {
             res.json({data: results});
         } else {
-            console.log(err);
             res.status(400);
             res.json({data: "error"});
         }
@@ -95,7 +93,6 @@ const deleteCart = (req, res) => {
         if (!err) {
             res.json({data: results});
         } else {
-            console.log(err);
             res.status(400);
             res.json({data: "error"});
         }
