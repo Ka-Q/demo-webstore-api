@@ -4,7 +4,7 @@ const mysql = require('mysql2');
 const getWishlist = (req, res) => {
     let params = req.query;
     let keys = Object.keys(params);
-    let query = "SELECT * FROM wishlist JOIN product ON product_product_id = product_id WHERE (1=1)";
+    let query = "SELECT * FROM wishlist JOIN product ON wishlist.product_id = product.product_id WHERE (1=1)";
 
     let queryList = [];
 
@@ -29,7 +29,7 @@ const getWishlist = (req, res) => {
 };
 
 const postToWishlist = (req, res) => {
-    let userID = req.body.user_id || req.body.user_user_id;
+    let userID = req.body.user_id;
     let products = req.body.products;
 
     if (!userID || !products) res.json({error: 'error'})
@@ -59,7 +59,7 @@ const postToWishlist = (req, res) => {
 };
 
 const deleteFromWishlist = (req, res) => {
-    let userID = req.body.user_id || req.body.user_user_id;
+    let userID = req.body.user_id;
     let products = req.body.products;
 
     if (!userID || !products) res.json({error: 'error'})
@@ -69,7 +69,7 @@ const deleteFromWishlist = (req, res) => {
     let queryList = [];
 
     for (let i in products) {
-        query += " OR (user_user_id = ? AND product_product_id = ?)";
+        query += " OR (user_id = ? AND product_id = ?)";
         queryList.push(userID);
         queryList.push(products[i].product_id || products[i].product_product_id);
     }
@@ -87,11 +87,11 @@ const deleteFromWishlist = (req, res) => {
 };
 
 const deleteWishlist = (req, res) => {
-    let userID = req.body.user_id || req.body.user_user_id;
+    let userID = req.body.user_id;
 
     if (!userID) res.json({error: 'error'})
 
-    let query = "DELETE FROM wishlist WHERE (user_user_id = ?)";
+    let query = "DELETE FROM wishlist WHERE (user_id = ?)";
 
     let queryList = [];
     queryList.push(userID);
