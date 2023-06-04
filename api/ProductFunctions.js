@@ -72,4 +72,44 @@ const deleteProductManufacturer = (req, res) => {
     connect(res, queryJSON);
 };
 
-module.exports = {getProduct, postProduct, putProduct, deleteProduct, getProductManufacturer, postProductManufacturer, deleteProductManufacturer}
+const getProductCategory = (req, res) => {
+    let params = req.query;
+    let productID = params.product_id;
+
+    if (!productID) { 
+        res.json({error: "Missing product ID"});
+        return;
+    }
+
+    let query = "SELECT * FROM category_products JOIN category ON category_products.category_id = category.category_id WHERE product_id = ?";
+
+    let queryList = [productID];
+
+    const connection = mysql.createConnection(process.env.DATABASE_URL)
+    connection.query(query, queryList, (err, results, fields) => {
+        if (!err) {
+            res.json({data: results});
+        } else {
+            res.status(400);
+            res.json({data: "error"});
+        }
+        
+    });
+    connection.end()
+};
+
+const postProductCategory = (req, res) => {
+    let queryJSON = generatePostSQL('category_products', req);
+    connect(res, queryJSON);
+};
+
+const deleteProductCategory = (req, res) => {
+    let queryJSON = generateDeleteSQL('category_products', req);
+    connect(res, queryJSON);
+};
+
+module.exports = {
+    getProduct, postProduct, putProduct, deleteProduct, getProductManufacturer, 
+    postProductManufacturer, deleteProductManufacturer, getProductCategory, 
+    postProductCategory, deleteProductCategory
+}

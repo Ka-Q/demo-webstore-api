@@ -6,6 +6,7 @@ const UserFunctions = require('./api/UserFunctions');
 const WishlistFunctions = require('./api/WishlistFunctions');
 const CartFunctions = require('./api/CartFunctions');
 const ReviewFunctions = require('./api/ReviewFunctions');
+const CategoryFunctions = require('./api/CategoryFunctions');
 
 const app = express();
 
@@ -27,6 +28,42 @@ app.get('/', (req, res) => {
 // API
 app.get('/api', (req, res) => {
     res.json({data: "no path"});
+});
+
+// CATEGORY
+app.get('/api/category', (req, res) => {
+    CategoryFunctions.getCategory(req, res);
+});
+app.post('/api/category', (req, res) => {
+    CategoryFunctions.postCategory(req, res);
+});
+app.put('/api/category', (req, res) => {
+    CategoryFunctions.putCategory(req, res);
+});
+app.delete('/api/category', (req, res) => {
+    CategoryFunctions.deleteCategory(req, res);
+});
+
+// CATEGORY PRODUCTS    requires category_id
+app.get('/api/category_product', (req, res) => {
+    CategoryFunctions.getCategoryProduct(req, res);
+});
+app.post('/api/category_product', (req, res) => {
+    CategoryFunctions.postCategoryProduct(req, res);
+});
+app.delete('/api/category_product', (req, res) => {
+    CategoryFunctions.deleteCategoryProduct(req, res);
+});
+
+// PRODUCT CATEGORIES    requires product_id
+app.get('/api/product_category', (req, res) => {
+    ProductFunctions.getProductCategory(req, res);
+});
+app.post('/api/product_category', (req, res) => {
+    ProductFunctions.postProductCategory(req, res);
+});
+app.delete('/api/product_category', (req, res) => {
+    ProductFunctions.deleteProductCategory(req, res);
 });
 
 // PRODUCT
