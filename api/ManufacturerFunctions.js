@@ -36,4 +36,40 @@ const deleteManufacturer = (req, res) => {
     connect(res, queryJSON);
 };
 
-module.exports = {getManufacturer, postManufacturer, putManufacturer, deleteManufacturer}
+const getManufacturerProduct = (req, res) => {
+    let params = req.query;
+    let manufacturerID = params.manufacturer_id;
+
+    if (!manufacturerID) { 
+        res.json({error: "Missing manufacturer ID"});
+        return;
+    }
+
+    let query = "SELECT * FROM product_manufacturers JOIN product ON product_manufacturers.product_id = product.product_id WHERE manufacturer_id = ?";
+
+    let queryList = [manufacturerID];
+
+    const connection = mysql.createConnection(process.env.DATABASE_URL)
+    connection.query(query, queryList, (err, results, fields) => {
+        if (!err) {
+            res.json({data: results});
+        } else {
+            res.status(400);
+            res.json({data: "error"});
+        }
+        
+    });
+    connection.end()
+};
+
+const postManufacturerProduct = (req, res) => {
+    let queryJSON = generatePostSQL('product_manufacturers', req);
+    connect(res, queryJSON);
+};
+
+const deleteManufacturerProduct = (req, res) => {
+    let queryJSON = generateDeleteSQL('product_manufacturers', req);
+    connect(res, queryJSON);
+};
+
+module.exports = {getManufacturer, postManufacturer, putManufacturer, deleteManufacturer, getManufacturerProduct, postManufacturerProduct, deleteManufacturerProduct}
