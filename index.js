@@ -83,7 +83,7 @@ app.delete('/api/user', (req, res) => {
     UserFunctions.deleteUser(req, res);
 });
 
-// WISHLIST
+// WISHLIST get and delete
 app.get('/api/user_wishlist', (req, res) => {
     WishlistFunctions.getWishlist(req, res);
 });
@@ -91,7 +91,7 @@ app.delete('/api/user_wishlist', (req, res) => {
     WishlistFunctions.deleteWishlist(req, res);
 });
 
-// WISHLIST PRODUCTS
+// WISHLIST PRODUCTS post and delete
 app.post('/api/user_wishlist_products', (req, res) => {
     WishlistFunctions.postToWishlist(req, res);
 });
