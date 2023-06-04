@@ -43,6 +43,17 @@ app.delete('/api/product', (req, res) => {
     ProductFunctions.deleteProduct(req, res);
 });
 
+// PRODUCT MANUFACTURERS    requires product_id
+app.get('/api/product_manufacturer', (req, res) => {
+    ProductFunctions.getProductManufacturer(req, res);
+});
+app.post('/api/product_manufacturer', (req, res) => {
+    ProductFunctions.postProductManufacturer(req, res);
+});
+app.delete('/api/product_manufacturer', (req, res) => {
+    ProductFunctions.deleteProductManufacturer(req, res);
+});
+
 // MANUFACTURER
 app.get('/api/manufacturer', (req, res) => {
     ManufacturerFunctions.getManufacturer(req, res);
@@ -55,6 +66,17 @@ app.put('/api/manufacturer', (req, res) => {
 });
 app.delete('/api/manufacturer', (req, res) => {
     ManufacturerFunctions.deleteManufacturer(req, res);
+});
+
+// MANUFACTURER PRODUCTS   requires manufacturer_id
+app.get('/api/product_manufacturer', (req, res) => {
+    ManufacturerFunctions.getManufacturerProduct(req, res);
+});
+app.post('/api/product_manufacturer', (req, res) => {
+    ManufacturerFunctions.postManufacturerProduct(req, res);
+});
+app.delete('/api/product_manufacturer', (req, res) => {
+    ManufacturerFunctions.deleteManufacturerProduct(req, res);
 });
 
 // ADDRESS
