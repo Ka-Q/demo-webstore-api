@@ -82,6 +82,11 @@ app.delete('/api/product', (req, res) => {
     ProductFunctions.deleteProduct(req, res);
 });
 
+//PRODUCT EXPANDED
+app.get('/api/product_expanded', (req, res) => {
+    ProductFunctions.getProductExpanded(req, res);
+});
+
 // PRODUCT MANUFACTURERS    requires product_id
 app.get('/api/product_manufacturer', (req, res) => {
     ProductFunctions.getProductManufacturer(req, res);
