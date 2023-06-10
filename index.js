@@ -8,6 +8,7 @@ const CartFunctions = require('./api/CartFunctions');
 const ReviewFunctions = require('./api/ReviewFunctions');
 const CategoryFunctions = require('./api/CategoryFunctions');
 const EventFunctions = require('./api/EventFunctions');
+const ImageFunctions = require('./api/ImageFunctions');
 
 const app = express();
 
@@ -207,5 +208,21 @@ app.put('/api/product_review', (req, res) => {
 app.delete('/api/product_review', (req, res) => {
     ReviewFunctions.deleteReview(req, res);
 });
+
+// IMAGE
+app.get('/api/image', (req, res) => {
+    ImageFunctions.getImage(req, res);
+});
+app.post('/api/image', (req, res) => {
+    ImageFunctions.postImage(req, res);
+});
+app.put('/api/image', (req, res) => {
+    ImageFunctions.putImage(req, res);
+});
+app.delete('/api/image', (req, res) => {
+    ImageFunctions.deleteImage(req, res);
+});
+
+
 
 module.exports = app;
