@@ -7,6 +7,7 @@ const WishlistFunctions = require('./api/WishlistFunctions');
 const CartFunctions = require('./api/CartFunctions');
 const ReviewFunctions = require('./api/ReviewFunctions');
 const CategoryFunctions = require('./api/CategoryFunctions');
+const EventFunctions = require('./api/EventFunctions');
 
 const app = express();
 
@@ -114,6 +115,20 @@ app.post('/api/manufacturer_product', (req, res) => {
 });
 app.delete('/api/manufacturer_product', (req, res) => {
     ManufacturerFunctions.deleteManufacturerProduct(req, res);
+});
+
+// EVENT
+app.get('/api/event', (req, res) => {
+    EventFunctions.getEvent(req, res);
+});
+app.post('/api/event', (req, res) => {
+    EventFunctions.postEvent(req, res);
+});
+app.put('/api/event', (req, res) => {
+    EventFunctions.putEvent(req, res);
+});
+app.delete('/api/event', (req, res) => {
+    EventFunctions.deleteEvent(req, res);
 });
 
 // ADDRESS
