@@ -144,9 +144,117 @@ const deleteProductImage = (req, res) => {
     connect(res, queryJSON);
 };
 
+const getProductExpanded = (req, res) => {
+    let params = req.query;
+    let productID = params.product_id;
+
+    if (!productID) { 
+        res.json({error: "Missing product ID"});
+        return;
+    }
+
+    let query = "SELECT *, image.image_id as product_image_id, product.product_id as product_product_id from product" +
+    " LEFT JOIN product_images" +
+    " ON product.product_id = product_images.product_id" +
+    " LEFT JOIN image" +
+    " ON image.image_id = product_images.image_id" +
+    " LEFT JOIN category_products" +
+    " ON category_products.product_id = product.product_id" +
+    " LEFT JOIN category" +
+    " ON category_products.category_id = category.category_id" +
+    " LEFT JOIN product_manufacturers" +
+    " ON product.product_id = product_manufacturers.product_id" +
+    " LEFT JOIN manufacturer" +
+    " ON product_manufacturers.manufacturer_id = manufacturer.manufacturer_id" +
+    " LEFT JOIN event" +
+    " ON product.event_id = event.event_id" +
+    " LEFT JOIN review" +
+    " ON product.product_id = review.product_id" +
+    " WHERE product.product_id = ?";
+
+    console.log(query);
+
+    let queryList = [productID];
+
+    const connection = mysql.createConnection(process.env.DATABASE_URL)
+    connection.query(query, queryList, (err, results, fields) => {
+        if (!err) {
+            console.log(results);
+            res.json({data: cleanResults(results)});
+        } else {
+            console.log(err);
+            res.status(400);
+            res.json({data: "error"});
+        }
+        
+    });
+    connection.end()
+}
+
+const cleanResults = (results) => {
+    let product = results[0];
+    if (!product) return {data: []};
+    let cleaned = {}
+    
+    cleaned.product_id = product.product_product_id;
+    cleaned.product_name = product.poduct_name;
+    cleaned.product_description = product.product_description;
+    cleaned.price = product.price;
+    cleaned.discount = product.discount;
+    if (product.event_id) {
+        cleaned.event = {
+            event_id: product.event_id,
+            event_name: product.event_name,
+            event_description: product.event_description,
+            event_start_date: product.event_start_date,
+            event_end_date: product.event_end_date
+        }
+    } else {
+        cleaned.event = null;
+    }
+    cleaned.categories = [];
+    cleaned.manufacturers = [];
+    cleaned.images = [];
+    cleaned.reviews = [];
+
+    for (let row of results) {
+
+        if (row.category_id && !cleaned.categories.find(c => c.category_id == row.category_id)) cleaned.categories.push({
+            category_id: row.category_id,
+            category_name: row.category_name,
+            category_description: row.category_description
+        });
+
+        if (row.manufacturer_id && !cleaned.manufacturers.find(m => m.manufacturer_id == row.manufacturer_id)) cleaned.manufacturers.push({
+            manufacturer_id: row.manufacturer_id,
+            manufacturer_name: row.manufacturer_name
+        });
+
+        if (row.product_image_id && !cleaned.images.find(i => i.image_id == row.product_image_id)) cleaned.images.push({
+            image_id: row.product_image_id,
+            image_source: row.image_source,
+            image_type_id: row.image_type_id,
+            image_description: row.image_description,
+            image_link: row.image_link
+        });
+
+        if (row.review_id && !cleaned.reviews.find(r => r.review_id == row.review_id)) cleaned.reviews.push({
+            review_id: row.review_id,
+            user_id: row.user_id,
+            review_rating: row.review_rating,
+            review_description: row.review_description,
+            review_helpful: row.review_helpful,
+            review_not_helpful: row.review_not_helpful
+        });
+    }
+
+    return cleaned;
+}
+
 module.exports = {
     getProduct, postProduct, putProduct, deleteProduct, 
     getProductManufacturer, postProductManufacturer, deleteProductManufacturer, 
     getProductCategory, postProductCategory, deleteProductCategory,
-    getProductImage, postProductImage, deleteProductImage
+    getProductImage, postProductImage, deleteProductImage,
+    getProductExpanded
 }
