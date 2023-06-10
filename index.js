@@ -223,6 +223,15 @@ app.delete('/api/image', (req, res) => {
     ImageFunctions.deleteImage(req, res);
 });
 
-
+// PRODUCT IMAGES requires product_id
+app.get('/api/product_image', (req, res) => {
+    ProductFunctions.getProductImage(req, res);
+});
+app.post('/api/product_image', (req, res) => {
+    ProductFunctions.postProductImage(req, res);
+});
+app.delete('/api/product_image', (req, res) => {
+    ProductFunctions.deleteProductImage(req, res);
+});
 
 module.exports = app;
