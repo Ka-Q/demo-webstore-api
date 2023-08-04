@@ -182,6 +182,12 @@ app.delete('/api/address', (req, res) => {
 app.get('/api/user', (req, res) => {
     UserFunctions.getUser(req, res);
 });
+app.get('/api/public_user', (req, res) => {
+    UserFunctions.getPublicUser(req, res);
+});
+app.get('/api/public_user_profile', (req, res) => {
+    UserFunctions.getPublicUserProfile(req, res);
+});
 app.post('/api/user', (req, res) => {
     UserFunctions.postUser(req, res);
 });
