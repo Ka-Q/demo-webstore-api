@@ -7,9 +7,6 @@ const session = require("express-session");
 const mysql = require('mysql2');
 const MySQLStore = require('express-mysql-session')(session);
 
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
-
 const path = require('path');
 
 const ProductFunctions = require('./api/ProductFunctions');
