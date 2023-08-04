@@ -1,7 +1,7 @@
 require('dotenv').config()
 const mysql = require('mysql2');
 const { generateGetSQL, generatePostSQL, generatePutSQL, generateDeleteSQL } = require('./SQLGenerators');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const saltRounds = 10;
 
 const connect = (res, queryJSON) => {
