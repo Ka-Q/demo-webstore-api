@@ -18,10 +18,84 @@ const connect = (res, queryJSON) => {
     connection.end()
 }
 
-const getUser = (req, res) => {
+const getUser = async (req, res) => {
     let queryJSON = generateGetSQL('user', req);
     connect(res, queryJSON);
 };
+
+const getPublicUser = async (req, res) => {
+    if (!req.query.user_id) {
+        res.status(404);
+        res.json({data: "error: user does not exist"});
+        return 0;
+    }
+
+    const connection = mysql.createConnection(process.env.DATABASE_URL)
+    connection.query("SELECT * FROM user WHERE ?? = ?", ["user_id", req.query.user_id], (err, results, fields) => {
+        if (!err) {
+            let returnObject = {
+                user_id: results[0].user_id,
+                user_username: results[0].user_username,
+                image_id: results[0].image_id,
+                role_id: results[0].role_id
+            }
+            res.json({data: returnObject});
+        } else {
+            console.log(err);
+            res.status(400);
+            res.json({data: "error"});
+        }
+    });
+    connection.end()
+};
+
+const getPublicUserProfile = async (req, res) => {
+    if (!req.query.user_id) {
+        res.status(404);
+        res.json({data: "error: user does not exist"});
+        return 0;
+    }
+    let query = "SELECT user.user_id, user.user_username, user.image_id, user.role_id, review.review_id, review.product_id, review.review_rating, review.review_description, review.review_helpful, review.review_not_helpful FROM user "+
+        "LEFT JOIN review ON user.user_id = review.user_id " +
+        "WHERE user.user_id = ?";
+    const connection = mysql.createConnection(process.env.DATABASE_URL)
+    connection.query(query, [req.query.user_id], (err, results, fields) => {
+        if (!err) {
+            res.json({data: cleanUserProfile(results)});
+        } else {
+            console.log(err);
+            res.status(400);
+            res.json({data: "error"});
+        }
+    });
+    connection.end()
+};
+
+const cleanUserProfile = (results) => {
+    let user = results[0];
+
+    if (!user) return {data: []};
+    let cleaned = {}
+
+    cleaned.user_id = user.user_id;
+    cleaned.user_username = user.user_username;
+    cleaned.image_id = user.image_id;
+    cleaned.role_id = user.role_id;
+
+    cleaned.reviews = [];
+    for (let row of results) {
+
+        if (row.review_id && !cleaned.reviews.find(r => r.review_id == row.review_id)) cleaned.reviews.push({
+            review_id: row.review_id,
+            product_id: row.product_id,
+            review_rating: row.review_rating,
+            review_description: row.review_description,
+            review_helpful: row.review_helpful,
+            review_not_helpful: row.review_not_helpful
+        });
+    }
+    return cleaned;
+}
 
 const postUser = (req, res) => {
     let queryJSON = generatePostSQL('user', req);
@@ -135,4 +209,4 @@ const logOut = (req, res) => {
     res.json({data: "Logged out"});
 }
 
-module.exports = {getUser, postUser, putUser, deleteUser, registerUser, logIn, checkLogIn, logOut}
+module.exports = {getUser, getPublicUser, getPublicUserProfile, postUser, putUser, deleteUser, registerUser, logIn, checkLogIn, logOut}
