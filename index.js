@@ -54,7 +54,7 @@ app.listen(PORT, () => {console.log(`App running in port ${PORT}`)});
 
 // ROOT
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, './index.html'));
+    res.sendFile(path.join(__dirname, './landing.html'));
 })
 
 // API
