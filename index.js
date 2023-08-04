@@ -1,4 +1,17 @@
+require('dotenv').config()
+
 const express = require('express');
+const cors = require('cors');
+const session = require("express-session");
+
+const mysql = require('mysql2');
+const MySQLStore = require('express-mysql-session')(session);
+
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
+const path = require('path');
+
 const ProductFunctions = require('./api/ProductFunctions');
 const ManufacturerFunctions = require('./api/ManufacturerFunctions');
 const AddressFunctions = require('./api/AddressFunctions');
@@ -14,17 +27,34 @@ const app = express();
 
 const PORT = 5000;
 
+app.use(cors());
+
 app.use(express.json());
 
+// USER SESSION
+// Options for mysql session store
+
+const dbConnection = mysql.createConnection(process.env.DATABASE_URL);
+const sessionStore = new MySQLStore({}, dbConnection);
+
+app.use(session({
+    key: "demo_ws_session",
+    secret: process.env.SESSION_SECRET,
+    store: sessionStore,
+    resave: true,
+    saveUninitialized: true,
+    rolling: true,
+    cookie: {
+      secure: false,
+      maxAge: 60000 * 30 // 1 min * 30  
+    }
+}));
+ 
 app.listen(PORT, () => {console.log(`App running in port ${PORT}`)});
 
 // ROOT
 app.get('/', (req, res) => {
-    let HTML = "<div> <h1>Demo webstore API</h1> </div> <div> <h3>WIP by Aku Laurila</h3> </div>"+
-    "<div> <p>An express API for use with a demo webstore.</p> </div>" +
-    "<ul> <li><a href='https://akulaurila.com'>Home page</a></li>" +
-    "<li><a href='https://github.com/Ka-Q'>GitHub</a></li> </ul>";
-    res.send(HTML);
+    res.sendFile(path.join(__dirname, './index.html'));
 })
 
 // API
@@ -163,6 +193,18 @@ app.put('/api/user', (req, res) => {
 });
 app.delete('/api/user', (req, res) => {
     UserFunctions.deleteUser(req, res);
+});
+app.post('/api/register', (req, res) => {
+    UserFunctions.registerUser(req, res);
+});
+app.post('/api/login', (req, res) => {
+    UserFunctions.logIn(req, res);
+});
+app.post('/api/check_login', (req, res) => {
+    UserFunctions.checkLogIn(req, res);
+});
+app.post('/api/logout', (req, res) => {
+    UserFunctions.logOut(req, res);
 });
 
 // WISHLIST get and delete
