@@ -26,6 +26,39 @@
 </body>
 
 <script>
+    let sessionTimeout;
+    let expirationTimeout;
+    let sessionDuration = 25 * 60000; //25 * 1 min = 25 min
+    let expirationDuration = 30 * 60000; //30 * 1 min = 30 min
+
+    const renewSessionExpiration = async () => {
+        let f = await fetch("./api/check_login", {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        let result = await f.json();
+        if (f.status == 200) {
+            resetSessionTimeout();
+        }
+    }
+
+    const resetSessionTimeout = () => {
+        clearTimeout(sessionTimeout);
+        clearTimeout(expirationTimeout);
+        sessionTimeout = setTimeout(() => {
+            if (confirm("Your session will expire in 5 minutes. Do you want to renew your session?")) {
+                renewSessionExpiration();
+            }
+        }, sessionDuration);
+        
+        expirationTimeout = setTimeout(() => {
+            location.reload();
+        }, expirationDuration);
+    }
+
     const handleLogIn = async (e) => {
         let emailInput = document.getElementById("email");
         let passwordInput = document.getElementById("password");
@@ -45,6 +78,7 @@
         let result = await f.json();
         if (f.status == 200) {
             loginInfo.innerText = ""
+            resetSessionTimeout();
         } else {
             loginInfo.innerText = "log in failed"
         }
@@ -61,6 +95,7 @@
             }
         });
         let result = await f.json();
+        clearTimeout(sessionTimeout);
         location.reload();
     }   
 
@@ -76,8 +111,10 @@
         let result = await f.json();
         if (f.status == 200) {
             isLoggedinInfo.innerText = "logged in as " + result.user_email;
+            resetSessionTimeout();
         } else {
             isLoggedinInfo.innerText = "not logged in";
+            clearTimeout(sessionTimeout);
         }
     }
 </script>
