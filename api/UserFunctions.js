@@ -154,7 +154,13 @@ const logIn = async (req, res) => {
     if (user) {
         const comparison = await bcrypt.compare(password, user.user_password.toString());
         if (comparison) {
-            req.session.user = {user_email: user.user_email, user_id: user.user_id, role_id: user.role_id}
+            req.session.user = {
+                user_email: user.user_email, 
+                user_id: user.user_id, 
+                user_username: user.user_username, 
+                user_first_name: user.user_first_name, 
+                user_last_name: user.user_last_name, 
+                role_id: user.role_id}
             req.session.save()
             res.status(200);
             res.json({data: "Logged in"});

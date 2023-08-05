@@ -19,12 +19,21 @@ const ReviewFunctions = require('./api/ReviewFunctions');
 const CategoryFunctions = require('./api/CategoryFunctions');
 const EventFunctions = require('./api/EventFunctions');
 const ImageFunctions = require('./api/ImageFunctions');
+const MaincategoryFunctions = require('./api/MaincategoryFunctions');
 
 const app = express();
 
 const PORT = 5000;
 
-app.use(cors());
+// CORS app.use(cors());
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "http://localhost:3000"); 
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Credentials", true);
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    next();
+});
+app.options('*', function (req,res) { res.sendStatus(200); });
 
 app.use(express.json());
 
@@ -57,6 +66,31 @@ app.get('/', (req, res) => {
 // API
 app.get('/api', (req, res) => {
     res.json({data: "no path"});
+});
+
+// MAIN CATEGORY
+app.get('/api/maincategory', (req, res) => {
+    MaincategoryFunctions.getMaincategory(req, res);
+});
+app.post('/api/maincategory', (req, res) => {
+    MaincategoryFunctions.postMaincategory(req, res);
+});
+app.put('/api/maincategory', (req, res) => {
+    MaincategoryFunctions.putMaincategory(req, res);
+});
+app.delete('/api/maincategory', (req, res) => {
+    MaincategoryFunctions.deleteMaincategory(req, res);
+});
+
+// MAIN CATEGORY CATEGORIES     requires maincategory_id
+app.get('/api/maincategory_category', (req, res) => {
+    MaincategoryFunctions.getMaincategoryCategory(req, res);
+});
+app.post('/api/maincategory_category', (req, res) => {
+    MaincategoryFunctions.postMaincategoryCategory(req, res);
+});
+app.delete('/api/maincategory_category', (req, res) => {
+    MaincategoryFunctions.deleteMaincategoryCategory(req, res);
 });
 
 // CATEGORY
