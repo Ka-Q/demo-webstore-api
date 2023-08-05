@@ -1,3 +1,7 @@
+const mysql = require('mysql2');
+const escape = mysql.escape;
+const escapeId = mysql.escapeId;
+
 const generateDeleteSQL = (table, req) => {
     let params = req.body;
     let keys = Object.keys(params);
@@ -80,6 +84,24 @@ const generatePostSQL = (table, req) => {
 }
 
 const generateGetSQL = (table, req) => {
+
+    let order;
+    let limit;
+    let offset;
+
+    if (req.query.order) {
+        order = req.query.order
+        delete req.query.order
+    }
+    if (req.query.limit) {
+        limit = req.query.limit
+        delete req.query.limit
+    }
+    if (req.query.offset) {
+        offset = req.query.offset
+        delete req.query.offset
+    }
+
     let params = req.query;
     let keys = Object.keys(params);
     let query = "SELECT * FROM " + table + " WHERE (1=1)";
@@ -91,6 +113,27 @@ const generateGetSQL = (table, req) => {
         query += " AND ?? LIKE ?";
         queryList.push(keys[x]);
         queryList.push(params[key]);
+    }
+
+    if (order) {
+        let orderSplit = order.split(" ");
+        if (orderSplit.length == 1 || orderSplit.length == 2) {
+            query += ` ORDER BY ${escapeId(orderSplit[0])}`;
+        }
+        if (orderSplit.length == 2) {
+            if (orderSplit[1] == 'DESC') {
+                query += ` DESC`;
+            } else {
+                query += ` ASC`
+            }
+        }
+    }
+
+    if (limit && !offset) {
+        query += ` LIMIT ${escape(Number(limit))}`;
+    } 
+    else if (limit && offset ) {
+        query += ` LIMIT ${escape(Number(limit))}, ${escape(Number(offset))}`;
     }
 
     let returnJson = { params: params, keys: Object.keys(params), query: query, queryList: queryList };
