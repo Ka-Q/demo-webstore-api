@@ -112,7 +112,20 @@ const generateGetSQL = (table, req) => {
         let key = keys[x];
         query += " AND ?? LIKE ?";
         queryList.push(keys[x]);
-        queryList.push(params[key]);
+        let val = params[key];
+
+        // If foggy search
+        if (val.charAt(0) == '%' && val.charAt(val.length - 1) == '%') {
+            val = val.substring(1, val.length - 1)
+            val = decodeURIComponent(val)
+            val = "%" + val + "%"
+            queryList.push(val)
+        }
+        // Otherwise
+        else {
+            val = decodeURIComponent(val)
+            queryList.push(val)
+        }
     }
 
     if (order) {
@@ -121,7 +134,7 @@ const generateGetSQL = (table, req) => {
             query += ` ORDER BY ${escapeId(orderSplit[0])}`;
         }
         if (orderSplit.length == 2) {
-            if (orderSplit[1] == 'DESC') {
+            if (orderSplit[1].toLowercase() == 'desc') {
                 query += ` DESC`;
             } else {
                 query += ` ASC`
