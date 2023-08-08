@@ -197,7 +197,7 @@ const cleanResults = (results) => {
     let cleaned = {}
     
     cleaned.product_id = product.product_product_id;
-    cleaned.product_name = product.poduct_name;
+    cleaned.product_name = product.product_name;
     cleaned.product_description = product.product_description;
     cleaned.price = product.price;
     cleaned.discount = product.discount;
