@@ -198,7 +198,6 @@ const getUserOnEmail = (email) => {
 }
 
 const checkLogIn = (req, res) => {
-    console.log(req.session.user);
     if (req.session.user) {
         res.status(200);
         res.json(req.session.user);
@@ -209,7 +208,6 @@ const checkLogIn = (req, res) => {
 }
 
 const logOut = (req, res) => {
-    console.log('logging out...')
     req.session.destroy();
     res.status(200);
     res.json({data: "Logged out"});
