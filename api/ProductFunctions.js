@@ -145,25 +145,9 @@ const deleteProductImage = (req, res) => {
 };
 
 const getProductExpanded = (req, res) => {
-    let query = "SELECT product.product_id, product.product_name, product.product_description, product.price, product.discount, product.product_stock, image.image_id, image.image_source, image.image_type_id, image.image_description, image.image_link, category.category_id, category.category_name, category.category_description, manufacturer.manufacturer_id, manufacturer.manufacturer_name, manufacturer.manufacturer_description, product.event_id, event.event_name, event.event_description, event.event_start_date, event.event_end_date, review.review_id, review.user_id, review.review_rating, review.review_description, review.review_helpful, review.review_not_helpful, image.image_id as product_image_id, product.product_id as product_product_id from product" +
-    " LEFT JOIN product_images" +
-    " ON product.product_id = product_images.product_id" +
-    " LEFT JOIN image" +
-    " ON image.image_id = product_images.image_id" +
-    " LEFT JOIN category_products" +
-    " ON category_products.product_id = product.product_id" +
-    " LEFT JOIN category" +
-    " ON category_products.category_id = category.category_id" +
-    " LEFT JOIN product_manufacturers" +
-    " ON product.product_id = product_manufacturers.product_id" +
-    " LEFT JOIN manufacturer" +
-    " ON product_manufacturers.manufacturer_id = manufacturer.manufacturer_id" +
-    " LEFT JOIN event" +
-    " ON product.event_id = event.event_id" +
-    " LEFT JOIN review" +
-    " ON product.product_id = review.product_id";
-
+    let query = "SELECT * FROM product_expanded WHERE product_id IN (SELECT product_id FROM product_expanded";
     let queryJSON = generateGetSQLFromQuery(query, req);
+    queryJSON.query += ")";
 
     const connection = mysql.createConnection(process.env.DATABASE_URL)
     connection.query(queryJSON.query, queryJSON.queryList, (err, results, fields) => {
@@ -217,36 +201,35 @@ const cleanResults = (results) => {
             cleaned.images = [];
             cleaned.reviews = [];
         }
-        else {
-            let row = product;
-            if (row.category_id && !cleaned.categories.find(c => c.category_id == row.category_id)) cleaned.categories.push({
-                category_id: row.category_id,
-                category_name: row.category_name,
-                category_description: row.category_description
-            });
 
-            if (row.manufacturer_id && !cleaned.manufacturers.find(m => m.manufacturer_id == row.manufacturer_id)) cleaned.manufacturers.push({
-                manufacturer_id: row.manufacturer_id,
-                manufacturer_name: row.manufacturer_name
-            });
+        let row = product;
+        if (row.category_id && !cleaned.categories.find(c => c.category_id == row.category_id)) cleaned.categories.push({
+            category_id: row.category_id,
+            category_name: row.category_name,
+            category_description: row.category_description
+        });
 
-            if (row.product_image_id && !cleaned.images.find(i => i.image_id == row.product_image_id)) cleaned.images.push({
-                image_id: row.product_image_id,
-                image_source: row.image_source,
-                image_type_id: row.image_type_id,
-                image_description: row.image_description,
-                image_link: row.image_link
-            });
+        if (row.manufacturer_id && !cleaned.manufacturers.find(m => m.manufacturer_id == row.manufacturer_id)) cleaned.manufacturers.push({
+            manufacturer_id: row.manufacturer_id,
+            manufacturer_name: row.manufacturer_name
+        });
 
-            if (row.review_id && !cleaned.reviews.find(r => r.review_id == row.review_id)) cleaned.reviews.push({
-                review_id: row.review_id,
-                user_id: row.user_id,
-                review_rating: row.review_rating,
-                review_description: row.review_description,
-                review_helpful: row.review_helpful,
-                review_not_helpful: row.review_not_helpful
-            });
-        }
+        if (row.product_image_id && !cleaned.images.find(i => i.image_id == row.product_image_id)) cleaned.images.push({
+            image_id: row.product_image_id,
+            image_source: row.image_source,
+            image_type_id: row.image_type_id,
+            image_description: row.image_description,
+            image_link: row.image_link
+        });
+
+        if (row.review_id && !cleaned.reviews.find(r => r.review_id == row.review_id)) cleaned.reviews.push({
+            review_id: row.review_id,
+            user_id: row.user_id,
+            review_rating: row.review_rating,
+            review_description: row.review_description,
+            review_helpful: row.review_helpful,
+            review_not_helpful: row.review_not_helpful
+        });
     }
     cleanedResults.push(cleaned);
     return cleanedResults;
