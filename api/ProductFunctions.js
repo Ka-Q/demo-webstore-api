@@ -145,7 +145,7 @@ const deleteProductImage = (req, res) => {
 };
 
 const getProductExpanded = (req, res) => {
-    let query = "SELECT *, image.image_id as product_image_id, product.product_id as product_product_id from product" +
+    let query = "SELECT product.product_id, product.product_name, product.product_description, product.price, product.discount, product.product_stock, image.image_id, image.image_source, image.image_type_id, image.image_description, image.image_link, category.category_id, category.category_name, category.category_description, manufacturer.manufacturer_id, manufacturer.manufacturer_name, manufacturer.manufacturer_description, product.event_id, event.event_name, event.event_description, event.event_start_date, event.event_end_date, review.review_id, review.user_id, review.review_rating, review.review_description, review.review_helpful, review.review_not_helpful, image.image_id as product_image_id, product.product_id as product_product_id from product" +
     " LEFT JOIN product_images" +
     " ON product.product_id = product_images.product_id" +
     " LEFT JOIN image" +
