@@ -154,7 +154,79 @@ const generateGetSQL = (table, req) => {
     return returnJson;
 }
 
+const generateGetSQLFromQuery = (q, req) => {
+
+    let order;
+    let limit;
+    let offset;
+
+    if (req.query.order) {
+        order = req.query.order
+        delete req.query.order
+    }
+    if (req.query.limit) {
+        limit = req.query.limit
+        delete req.query.limit
+    }
+    if (req.query.offset) {
+        offset = req.query.offset
+        delete req.query.offset
+    }
+
+    let params = req.query;
+    let keys = Object.keys(params);
+    let query = q + " WHERE (1=1)";
+
+    let queryList = [];
+
+    for (let x in keys) {
+        let key = keys[x];
+        query += " AND ?? LIKE ?";
+        queryList.push(keys[x]);
+        let val = params[key];
+
+        // If foggy search
+        if (val.charAt(0) == '%' && val.charAt(val.length - 1) == '%') {
+            val = val.substring(1, val.length - 1)
+            val = decodeURIComponent(val)
+            val = "%" + val + "%"
+            queryList.push(val)
+        }
+        // Otherwise
+        else {
+            val = decodeURIComponent(val)
+            queryList.push(val)
+        }
+    }
+
+    if (order) {
+        let orderSplit = order.split(" ");
+        if (orderSplit.length == 1 || orderSplit.length == 2) {
+            query += ` ORDER BY ${escapeId(orderSplit[0])}`;
+        }
+        if (orderSplit.length == 2) {
+            if (orderSplit[1].toLowercase() == 'desc') {
+                query += ` DESC`;
+            } else {
+                query += ` ASC`
+            }
+        }
+    }
+
+    if (limit && !offset) {
+        query += ` LIMIT ${escape(Number(limit))}`;
+    } 
+    else if (limit && offset ) {
+        query += ` LIMIT ${escape(Number(limit))}, ${escape(Number(offset))}`;
+    }
+
+    let returnJson = { params: params, keys: Object.keys(params), query: query, queryList: queryList };
+    console.log(returnJson);
+    return returnJson;
+}
+
 exports.generateGetSQL = generateGetSQL;
 exports.generatePostSQL = generatePostSQL;
 exports.generatePutSQL = generatePutSQL;
 exports.generateDeleteSQL = generateDeleteSQL;
+exports.generateGetSQLFromQuery = generateGetSQLFromQuery;
