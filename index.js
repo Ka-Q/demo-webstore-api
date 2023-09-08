@@ -10,10 +10,6 @@ const mysqlStore  = require('express-mysql-session')(session);
 
 const path = require('path');
 
-
-
-const { S3Client, GetObjectCommand, PutObjectCommand  } = require("@aws-sdk/client-s3");
-
 const ProductFunctions = require('./api/ProductFunctions');
 const ManufacturerFunctions = require('./api/ManufacturerFunctions');
 const AddressFunctions = require('./api/AddressFunctions');
