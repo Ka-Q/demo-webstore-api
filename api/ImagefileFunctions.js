@@ -1,60 +1,50 @@
 require('dotenv').config()
-require("@aws-sdk/client-s3").S3Client();
+const {AwsClient} = require('aws4fetch');
 
-/*const client = new S3({
-    endpoint: process.env.R2_ENDPOINT ,
-    credentials: {
-        accessKeyId: process.env.R2_ACCESSKEY,
-        secretAccessKey: process.env.R2_ACCESSKEY_SECRET,
-        },
-    region: 'auto'
-});*/
+const R2_URL = process.env.R2_ENDPOINT;
+
+const client = new AwsClient({
+  accessKeyId: process.env.R2_ACCESSKEY,
+  secretAccessKey: process.env.R2_ACCESSKEY_SECRET,
+});
 
 const getImageFile = async (req, res) => {
-    /*let filename = req.query.filename;
+    let filename = req.query.filename;
 
     if (!filename) {
         res.json({error: "missing filename"})
     }
     else {
         try {
-            const command = new GetObjectCommand({
-                Bucket: process.env.R2_BUCKET,
-                Key: filename
-            });
-    
-            const data = await client.send(command);
-            const fileStream = data.Body;
+            const ListBucketsResult = await client.fetch(R2_URL);
+            console.log(await ListBucketsResult.text());
+
+            const data = await client.fetch(`${R2_URL}/demo-web-store/default_pfp.png`, {method: 'GET'});
+            const arrayBuffer = await data.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
             res.setHeader('Content-Type', 'image/jpeg');
-            fileStream.pipe(res);
-        } catch (err) {*/
-            res.status(200);
-            res.json({error: "no such file"})
-        /*}
-    } */
+            res.send(buffer);
+        } catch (err) {
+            res.json({error: "error"});
+        }
+    }
 }
 
 const postImageFile = async (req, res) => {
-    /*if (!req.files || Object.keys(req.files).length === 0) {
-        return res.status(400).send('No files were uploaded.');
+
+	let file = req.files.file;
+
+    if (!file) {
+        res.json({eroor: "error"});
+    } 
+    else {
+        await client.fetch(`${process.env.R2_ENDPOINT}/demo-web-store/asdfghjk.png`, {
+            method: 'PUT',
+            body: file.data
+        })
+        return res.json({ uploaded: true })
     }
-
-    let file = req.files.file;
-    let filename = file.name;
-
-    try {
-        const command = new PutObjectCommand({
-            Bucket: process.env.R2_BUCKET,
-            Key: filename,
-            Body: file.data
-        });
-
-        await client.send(command);
-        res.json({success: "File uploaded successfully"})
-    } catch (err) {*/
-        res.status(200);
-        res.json({error: "Error uploading file"})
-    /*}*/
+	
 }
 
 module.exports = {getImageFile, postImageFile};
