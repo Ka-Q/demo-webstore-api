@@ -55,9 +55,12 @@ const getPublicUserProfile = async (req, res) => {
         res.json({data: "error: user does not exist"});
         return 0;
     }
-    let query = "SELECT user.user_id, user.user_username, user.image_id, user.role_id, review.review_id, review.product_id, review.review_rating, review.review_description, review.review_helpful, review.review_not_helpful FROM user "+
-        "LEFT JOIN review ON user.user_id = review.user_id " +
-        "WHERE user.user_id = ?";
+    let query = 'SELECT user.user_id, user.user_username, user.image_id, image.image_source, image.image_type_id, image.image_description, image.image_link, user.role_id, review.review_id, review.product_id, review.review_rating, review.review_description, review.review_helpful, review.review_not_helpful' + 
+    ' FROM user' + 
+    ' LEFT JOIN review ON user.user_id = review.user_id' +
+    ' LEFT JOIN image ON user.image_id = image.image_id' +
+    ' WHERE user.user_id = ?';
+
     const connection = mysql.createConnection(process.env.DATABASE_URL)
     connection.query(query, [req.query.user_id], (err, results, fields) => {
         if (!err) {
@@ -80,6 +83,7 @@ const cleanUserProfile = (results) => {
     cleaned.user_id = user.user_id;
     cleaned.user_username = user.user_username;
     cleaned.image_id = user.image_id;
+    cleaned.image_src = user.image_source;
     cleaned.role_id = user.role_id;
 
     cleaned.reviews = [];
@@ -160,6 +164,7 @@ const logIn = async (req, res) => {
                 user_username: user.user_username, 
                 user_first_name: user.user_first_name, 
                 user_last_name: user.user_last_name, 
+                image_id: user.image_id,
                 role_id: user.role_id}
             req.session.save()
             res.status(200);
