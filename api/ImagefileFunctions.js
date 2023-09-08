@@ -1,23 +1,25 @@
 require('dotenv').config()
-//const { S3Client, GetObjectCommand, PutObjectCommand  } = require("@aws-sdk/client-s3");
+const { S3Client, GetObjectCommand, PutObjectCommand  } = require("@aws-sdk/client-s3");
 
 const getImageFile = async (req, res) => {
     let filename = req.query.filename;
-
-    /*const client = new S3Client({
-        endpoint: process.env.R2_ENDPOINT ,
-        credentials: {
-            accessKeyId: process.env.R2_ACCESSKEY,
-            secretAccessKey: process.env.R2_ACCESSKEY_SECRET,
-            },
-        region: process.env.R2_REGION,
-    });*/
 
     if (!filename) {
         res.json({error: "missing filename"})
     }
     else {
         try {
+
+            const client = new S3Client({
+                endpoint: process.env.R2_ENDPOINT ,
+                credentials: {
+                    accessKeyId: process.env.R2_ACCESSKEY,
+                    secretAccessKey: process.env.R2_ACCESSKEY_SECRET,
+                    },
+                region: process.env.R2_REGION,
+            });
+        
+
             const command = new GetObjectCommand({
                 Bucket: process.env.R2_BUCKET,
                 Key: filename
@@ -35,15 +37,6 @@ const getImageFile = async (req, res) => {
 
 const postImageFile = async (req, res) => {
 
-    /*const client = new S3Client({
-        endpoint: process.env.R2_ENDPOINT ,
-        credentials: {
-            accessKeyId: process.env.R2_ACCESSKEY,
-            secretAccessKey: process.env.R2_ACCESSKEY_SECRET,
-            },
-        region: process.env.R2_REGION,
-    });*/
-
     if (!req.files || Object.keys(req.files).length === 0) {
         return res.status(400).send('No files were uploaded.');
     }
@@ -52,6 +45,16 @@ const postImageFile = async (req, res) => {
     let filename = file.name;
 
     try {
+
+        const client = new S3Client({
+            endpoint: process.env.R2_ENDPOINT ,
+            credentials: {
+                accessKeyId: process.env.R2_ACCESSKEY,
+                secretAccessKey: process.env.R2_ACCESSKEY_SECRET,
+                },
+            region: process.env.R2_REGION,
+        });
+
         const command = new PutObjectCommand({
             Bucket: 'demo-web-store',
             Key: filename,
