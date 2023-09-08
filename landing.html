@@ -26,6 +26,13 @@
     <button id='btn2' onclick="handleLogOut(event)">Log out</button>
     <p id="logInInfo"></p>
     <p id="isLoggedInInfo"></p>
+
+    <br/>
+    <br/>
+        <form action="/api/imagefile"  method='post' encType="multipart/form-data">
+        <input name="file" type="file" />
+        <button type="submit">submit</button>
+    </form>  
 </body>
 
 <script>
