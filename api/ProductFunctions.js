@@ -145,9 +145,16 @@ const deleteProductImage = (req, res) => {
 };
 
 const getProductExpanded = (req, res) => {
+
     let query = "SELECT * FROM product_expanded WHERE product_id IN (SELECT product_id FROM product_expanded";
     let queryJSON = generateGetSQLFromQuery(query, req);
-    queryJSON.query += ")";
+    //queryJSON.query += ")";
+
+
+    /*let query = "SELECT * FROM product_expanded"
+    let queryJSON = generateGetSQLFromQuery(query, req);*/
+
+    console.log(queryJSON.query);
 
     const connection = mysql.createConnection(process.env.DATABASE_URL)
     connection.query(queryJSON.query, queryJSON.queryList, (err, results, fields) => {
@@ -200,6 +207,7 @@ const cleanResults = (results) => {
             cleaned.manufacturers = [];
             cleaned.images = [];
             cleaned.reviews = [];
+            cleaned.avg_review_rating = product.avg_review_rating;
         }
 
         let row = product;

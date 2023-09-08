@@ -221,7 +221,8 @@ const generateGetSQLFromQuery = (q, req) => {
         }
     }
 
-
+    query += ')'
+    
     if (order) {
         
         let orderSplit = order.split(" ");
