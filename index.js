@@ -1,7 +1,7 @@
 require('dotenv').config()
 
 const express = require('express');
-//const cors = require('cors');
+const cors = require('cors');
 const session = require("express-session");
 const fileUpload = require('express-fileupload');
 
@@ -27,14 +27,16 @@ const app = express();
 
 const PORT = 5000;
 
-// CORS app.use(cors());
-app.use(function(req, res, next) {
+// CORS 
+app.use(cors());
+/*app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*"); 
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     res.header("Access-Control-Allow-Credentials", true);
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     next();
-});
+});*/
+
 app.options('*', function (req,res) { res.sendStatus(200); });
 
 app.use(express.json());
@@ -86,7 +88,6 @@ app.listen(PORT, () => {console.log(`App running in port ${PORT}`)});
 
 // ROOT
 app.get('/', (req, res) => {
-    res.status(204);
     res.sendFile(path.join(__dirname, './landing.html'));
 })
 
