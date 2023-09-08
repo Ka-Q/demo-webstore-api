@@ -37,7 +37,7 @@ const getImageFile = async (req, res) => {
 
 const postImageFile = async (req, res) => {
 
-    if (!req.files || Object.keys(req.files).length === 0) {
+    /*if (!req.files || Object.keys(req.files).length === 0) {
         return res.status(400).send('No files were uploaded.');
     }
 
@@ -56,16 +56,16 @@ const postImageFile = async (req, res) => {
         });
 
         const command = new PutObjectCommand({
-            Bucket: 'demo-web-store',
+            Bucket: process.env.R2_BUCKET,
             Key: filename,
             Body: file.data
         });
 
         await client.send(command);
         res.json({success: "File uploaded successfully"})
-    } catch (err) {
+    } catch (err) {*/
         res.json({error: "Error uploading file"})
-    }
+    //}
 }
 
 module.exports = {getImageFile, postImageFile};
