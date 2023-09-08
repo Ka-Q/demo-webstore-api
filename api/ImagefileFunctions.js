@@ -38,11 +38,15 @@ const postImageFile = async (req, res) => {
         res.json({eroor: "error"});
     } 
     else {
-        await client.fetch(`${process.env.R2_ENDPOINT}/demo-web-store/asdfghjk.png`, {
-            method: 'PUT',
-            body: file.data
-        })
-        return res.json({ uploaded: true })
+        try {
+            await client.fetch(`${process.env.R2_ENDPOINT}/demo-web-store/asdfghjk.png`, {
+                method: 'PUT',
+                body: file.data
+            })
+            return res.json({ uploaded: true })
+        } catch (err) {
+            res.json({error: "error"});
+        }
     }
 	
 }
