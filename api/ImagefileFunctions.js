@@ -1,5 +1,5 @@
 require('dotenv').config()
-const { S3Client, GetObjectCommand, PutObjectCommand  } = require("@aws-sdk/client-s3");
+//const { S3Client, GetObjectCommand, PutObjectCommand  } = require("@aws-sdk/client-s3");
 
 const getImageFile = async (req, res) => {
     /*let filename = req.query.filename;
