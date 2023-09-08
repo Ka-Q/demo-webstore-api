@@ -10,6 +10,10 @@ const mysqlStore  = require('express-mysql-session')(session);
 
 const path = require('path');
 
+
+
+const { S3Client, GetObjectCommand, PutObjectCommand  } = require("@aws-sdk/client-s3");
+
 const ProductFunctions = require('./api/ProductFunctions');
 const ManufacturerFunctions = require('./api/ManufacturerFunctions');
 const AddressFunctions = require('./api/AddressFunctions');
@@ -21,7 +25,7 @@ const CategoryFunctions = require('./api/CategoryFunctions');
 const EventFunctions = require('./api/EventFunctions');
 const ImageFunctions = require('./api/ImageFunctions');
 const MaincategoryFunctions = require('./api/MaincategoryFunctions');
-const ImagefileFunctions = require('./api/ImagefileFunctions');
+//const ImagefileFunctions = require('./api/ImagefileFunctions');
 
 const app = express();
 
@@ -336,10 +340,65 @@ app.delete('/api/product_image', (req, res) => {
 });
 
 app.get('/api/imagefile', (req, res) => {
-    ImagefileFunctions.getImageFile(req, res);
+    getImageFile(req, res);
 });
 app.post('/api/imagefile', (req, res) => {
-    ImagefileFunctions.postImageFile(req, res);
+    postImageFile(req, res);
 });
+
+const client = new S3Client({
+    endpoint: process.env.R2_ENDPOINT ,
+    credentials: {
+        accessKeyId: process.env.R2_ACCESSKEY,
+        secretAccessKey: process.env.R2_ACCESSKEY_SECRET,
+        },
+    region: 'auto'
+});
+
+const getImageFile = async (req, res) => {
+    let filename = req.query.filename;
+
+    if (!filename) {
+        res.json({error: "missing filename"})
+    }
+    else {
+        try {
+            const command = new GetObjectCommand({
+                Bucket: process.env.R2_BUCKET,
+                Key: filename
+            });
+    
+            const data = await client.send(command);
+            const fileStream = data.Body;
+            res.setHeader('Content-Type', 'image/jpeg');
+            fileStream.pipe(res);
+        } catch (err) {
+            res.json({error: "no such file"})
+        }
+    } 
+}
+
+const postImageFile = async (req, res) => {
+    if (!req.files || Object.keys(req.files).length === 0) {
+        return res.status(400).send('No files were uploaded.');
+    }
+
+    let file = req.files.file;
+    let filename = file.name;
+
+    try {
+        const command = new PutObjectCommand({
+            Bucket: process.env.R2_BUCKET,
+            Key: filename,
+            Body: file.data
+        });
+
+        await client.send(command);
+        res.json({success: "File uploaded successfully"})
+    } catch (err) {
+        res.json({error: "Error uploading file"})
+    }
+}
+
 
 module.exports = app;
