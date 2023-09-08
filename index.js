@@ -3,10 +3,9 @@ require('dotenv').config()
 const express = require('express');
 const cors = require('cors');
 const session = require("express-session");
-const fileUpload = require('express-fileupload');
 
 const mysql = require('mysql2');
-const mysqlStore  = require('express-mysql-session')(session);
+const MySQLStore = require('express-mysql-session')(session);
 
 const path = require('path');
 
@@ -21,55 +20,28 @@ const CategoryFunctions = require('./api/CategoryFunctions');
 const EventFunctions = require('./api/EventFunctions');
 const ImageFunctions = require('./api/ImageFunctions');
 const MaincategoryFunctions = require('./api/MaincategoryFunctions');
-const ImagefileFunctions = require('./api/ImagefileFunctions');
 
 const app = express();
 
 const PORT = 5000;
 
-// CORS 
-app.use(cors());
-/*app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*"); 
+// CORS app.use(cors());
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "http://localhost:3000"); 
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     res.header("Access-Control-Allow-Credentials", true);
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     next();
-});*/
-
+});
 app.options('*', function (req,res) { res.sendStatus(200); });
 
 app.use(express.json());
 
-app.use(fileUpload());
-
-function ignoreFavicon(req, res, next) {
-    if (req.originalUrl.includes('favicon.ico')) {
-      res.status(204).end()
-    }
-    next();
-}
-
-app.use(ignoreFavicon);
-
-
 // USER SESSION
 // Options for mysql session store
 
-/*const options ={
-    connectionLimit: 10,
-    password: process.env.DB_PASSWORD,
-    user: process.env.DB_USER,
-    database: process.env.MYSQL_DB,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    createDatabaseTable: true
-}
-
-const  sessionStore = new mysqlStore(options);*/
-
 const dbConnection = mysql.createConnection(process.env.DATABASE_URL);
-const sessionStore = new mysqlStore({connectionLimit: 10}, dbConnection);
+const sessionStore = new MySQLStore({}, dbConnection);
 
 app.use(session({
     key: "demo_ws_session",
@@ -344,13 +316,6 @@ app.post('/api/product_image', (req, res) => {
 });
 app.delete('/api/product_image', (req, res) => {
     ProductFunctions.deleteProductImage(req, res);
-});
-
-app.get('/api/imagefile', (req, res) => {
-    ImagefileFunctions.getImageFile(req, res);
-});
-app.post('/api/imagefile', (req, res) => {
-    ImagefileFunctions.postImageFile(req, res);
 });
 
 module.exports = app;
