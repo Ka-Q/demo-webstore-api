@@ -134,7 +134,7 @@ const generateGetSQL = (table, req) => {
             query += ` ORDER BY ${escapeId(orderSplit[0])}`;
         }
         if (orderSplit.length == 2) {
-            if (orderSplit[1].toLowercase() == 'desc') {
+            if (orderSplit[1].toLowerCase() == 'desc') {
                 query += ` DESC`;
             } else {
                 query += ` ASC`
@@ -181,31 +181,55 @@ const generateGetSQLFromQuery = (q, req) => {
 
     for (let x in keys) {
         let key = keys[x];
-        query += " AND ?? LIKE ?";
-        queryList.push(keys[x]);
         let val = params[key];
 
-        // If foggy search
-        if (val.charAt(0) == '%' && val.charAt(val.length - 1) == '%') {
-            val = val.substring(1, val.length - 1)
-            val = decodeURIComponent(val)
-            val = "%" + val + "%"
-            queryList.push(val)
+        // Handle min_price and max_price separately
+        if (key === 'min_price') {
+            query += ` AND price >= ?`;
+            queryList.push(val);
+        } else if (key === 'max_price') {
+            query += ` AND price <= ?`;
+            queryList.push(val);
         }
-        // Otherwise
+
+        // If the value is an array, handle it separately
+        else if (Array.isArray(val)) {
+
+            val = val[0].split(',');
+
+            query += ` AND ?? IN (?)`;
+            queryList.push(key);
+            queryList.push(val.map(decodeURIComponent));
+        } 
+        // Otherwise, handle as before
         else {
-            val = decodeURIComponent(val)
-            queryList.push(val)
+            query += " AND ?? LIKE ?";
+            queryList.push(key);
+
+            // If foggy search
+            if (val.charAt(0) == '%' && val.charAt(val.length - 1) == '%') {
+                val = val.substring(1, val.length - 1)
+                val = decodeURIComponent(val)
+                val = "%" + val + "%"
+                queryList.push(val)
+            }
+            // Otherwise
+            else {
+                val = decodeURIComponent(val)
+                queryList.push(val)
+            }
         }
     }
 
+
     if (order) {
+        
         let orderSplit = order.split(" ");
         if (orderSplit.length == 1 || orderSplit.length == 2) {
             query += ` ORDER BY ${escapeId(orderSplit[0])}`;
         }
         if (orderSplit.length == 2) {
-            if (orderSplit[1].toLowercase() == 'desc') {
+            if (orderSplit[1].toLowerCase() == 'desc') {
                 query += ` DESC`;
             } else {
                 query += ` ASC`
