@@ -41,6 +41,15 @@ app.use(express.json());
 
 app.use(fileUpload());
 
+function ignoreFavicon(req, res, next) {
+    if (req.originalUrl.includes('favicon.ico')) {
+      res.status(204).end()
+    }
+    next();
+}
+
+app.use(ignoreFavicon);
+
 
 // USER SESSION
 // Options for mysql session store
@@ -80,9 +89,6 @@ app.get('/', (req, res) => {
     res.status(204);
     res.sendFile(path.join(__dirname, './landing.html'));
 })
-
-//Favicon
-app.get('/favicon.ico', (req, res) => res.status(204));
 
 // API
 app.get('/api', (req, res) => {
