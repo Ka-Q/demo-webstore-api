@@ -80,6 +80,9 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, './landing.html'));
 })
 
+//Favicon
+app.get('/favicon.ico', (req, res) => res.status(204));
+
 // API
 app.get('/api', (req, res) => {
     res.json({data: "no path"});
