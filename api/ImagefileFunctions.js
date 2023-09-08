@@ -1,17 +1,17 @@
-/*require('dotenv').config()
+require('dotenv').config()
 const { S3Client, GetObjectCommand, PutObjectCommand  } = require("@aws-sdk/client-s3");
 
-const client = new S3Client({
-    endpoint: process.env.R2_ENDPOINT ,
-    credentials: {
-        accessKeyId: process.env.R2_ACCESSKEY,
-        secretAccessKey: process.env.R2_ACCESSKEY_SECRET,
-        },
-    region: process.env.R2_REGION,
-});*/
-
 const getImageFile = async (req, res) => {
-    /*let filename = req.query.filename;
+    let filename = req.query.filename;
+
+    const client = new S3Client({
+        endpoint: process.env.R2_ENDPOINT ,
+        credentials: {
+            accessKeyId: process.env.R2_ACCESSKEY,
+            secretAccessKey: process.env.R2_ACCESSKEY_SECRET,
+            },
+        region: process.env.R2_REGION,
+    });
 
     if (!filename) {
         res.json({error: "missing filename"})
@@ -30,12 +30,21 @@ const getImageFile = async (req, res) => {
         } catch (err) {
             res.json({error: "No such file"})
         }
-    } */
-    res.json({test: test})
+    } 
 }
 
 const postImageFile = async (req, res) => {
-    /*if (!req.files || Object.keys(req.files).length === 0) {
+
+    const client = new S3Client({
+        endpoint: process.env.R2_ENDPOINT ,
+        credentials: {
+            accessKeyId: process.env.R2_ACCESSKEY,
+            secretAccessKey: process.env.R2_ACCESSKEY_SECRET,
+            },
+        region: process.env.R2_REGION,
+    });
+    
+    if (!req.files || Object.keys(req.files).length === 0) {
         return res.status(400).send('No files were uploaded.');
     }
 
@@ -53,8 +62,7 @@ const postImageFile = async (req, res) => {
         res.json({success: "File uploaded successfully"})
     } catch (err) {
         res.json({error: "Error uploading file"})
-    }*/
-    res.json({test: test})
+    }
 }
 
 module.exports = {getImageFile, postImageFile};
