@@ -207,7 +207,7 @@ const checkLogIn = (req, res) => {
         res.status(200);
         res.json(req.session.user);
     } else {
-        res.status(200);
+        res.status(400);
         res.json({data: "Not logged in"});
     }
 }
