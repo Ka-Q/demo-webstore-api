@@ -2,7 +2,7 @@ require('dotenv').config()
 const { S3Client, GetObjectCommand, PutObjectCommand  } = require("@aws-sdk/client-s3");
 
 const getImageFile = async (req, res) => {
-    let filename = req.query.filename;
+    /*let filename = req.query.filename;
 
     if (!filename) {
         res.json({error: "missing filename"})
@@ -29,10 +29,10 @@ const getImageFile = async (req, res) => {
             const fileStream = data.Body;
             res.setHeader('Content-Type', 'image/jpeg');
             fileStream.pipe(res);
-        } catch (err) {
+        } catch (err) {*/
             res.json({error: "No such file"})
-        }
-    } 
+        //}
+    //} 
 }
 
 const postImageFile = async (req, res) => {
