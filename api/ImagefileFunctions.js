@@ -1,5 +1,5 @@
 require('dotenv').config()
-//require("@aws-sdk/client-s3");
+require("@aws-sdk/client-s3");
 
 /*const client = new S3({
     endpoint: process.env.R2_ENDPOINT ,
