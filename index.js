@@ -77,6 +77,7 @@ app.listen(PORT, () => {console.log(`App running in port ${PORT}`)});
 
 // ROOT
 app.get('/', (req, res) => {
+    res.status(204);
     res.sendFile(path.join(__dirname, './landing.html'));
 })
 
