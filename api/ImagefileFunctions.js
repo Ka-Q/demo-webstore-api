@@ -1,14 +1,9 @@
 require('dotenv').config()
-const {AwsClient} = require('aws4fetch');
-
 const AWS = require('aws-sdk');
+const { v4: uuidv4 } = require('uuid');
+const path = require('path');
 
 const R2_URL = process.env.R2_ENDPOINT;
-
-const client = new AwsClient({
-  accessKeyId: process.env.R2_ACCESSKEY,
-  secretAccessKey: process.env.R2_ACCESSKEY_SECRET,
-});
 
 const s3 = new AWS.S3({
     endpoint: R2_URL,
@@ -16,61 +11,62 @@ const s3 = new AWS.S3({
     secretAccessKey: process.env.R2_ACCESSKEY_SECRET,
     signatureVersion: 'v4',
     region: 'auto'
-  });
+});
 
 const getImageFile = async (req, res) => {
     let filename = req.query.filename;
 
     if (!filename) {
-        res.json({error: "missing filename"})
+        res.json({ error: "missing filename" })
     }
     else {
         const params = {
             Bucket: process.env.R2_BUCKET,
-            Key: 'default_pfp.png',
-          };
-          try {
+            Key: filename,
+        };
+        try {
             const data = await s3.getObject(params).promise();
-            res.setHeader('Content-Type', 'image/png');
+            let fileType = data.Metadata['file-type'];
+            if (fileType) {
+                res.setHeader('Content-Type', `image/${fileType.substring(1)}`);
+              } else {
+                res.setHeader('Content-Type', 'image/png');
+              }
             res.send(data.Body);
-          } catch (err) {
-            res.status(500).json({ error: err.toString() });
-          }
-        /*try {
-            const ListBucketsResult = await client.fetch(R2_URL);
-            console.log(await ListBucketsResult.text());
-
-            const data = await client.fetch(`${R2_URL}/demo-web-store/default_pfp.png`, {method: 'GET'});
-            const arrayBuffer = await data.arrayBuffer();
-            const buffer = Buffer.from(arrayBuffer);
-            res.setHeader('Content-Type', 'image/jpeg');
-            res.send(buffer);
         } catch (err) {
-            res.json({error: "error"});
-        }*/
+            res.status(500).json({ error: "Error getting image" });
+        }
     }
 }
 
 const postImageFile = async (req, res) => {
 
-	let file = req.files.file;
+    let file = req.files.file;
 
     if (!file) {
-        res.json({error: "error"});
-    } 
-    else {
-        /*try {
-            await client.fetch(`${process.env.R2_ENDPOINT}/demo-web-store/asdfghjk.png`, {
-                method: 'PUT',
-                body: file.data
-            })
-            return res.json({ uploaded: true })
+        res.json({ error: "No file provided" });
+    } else {
+        let ext = path.extname(file.name);
+        let uniqueFilename = `${Date.now()}-${uuidv4()}${ext}`;
+        
+        const params = {
+            Bucket: process.env.R2_BUCKET,
+            Key: uniqueFilename,
+            Body: file.data,
+            ACL: 'public-read',
+            Metadata: {
+                'file-type': path.extname(file.name),
+              },
+        };
+
+        try {
+            await s3.upload(params).promise();
+            res.json({ uploaded: true, filename: uniqueFilename  });
         } catch (err) {
-            res.json({error: "error"});
-        }*/
+            res.status(500).json({ error: "Error uploading image" });
+        }
     }
-	
 }
 
 
-module.exports = {getImageFile, postImageFile};
+module.exports = { getImageFile, postImageFile };
