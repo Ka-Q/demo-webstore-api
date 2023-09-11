@@ -1,6 +1,8 @@
 require('dotenv').config()
 const {AwsClient} = require('aws4fetch');
 
+const {AWS} = require('aws-sdk');
+
 const R2_URL = process.env.R2_ENDPOINT;
 
 const client = new AwsClient({
@@ -35,7 +37,7 @@ const postImageFile = async (req, res) => {
 	let file = req.files.file;
 
     if (!file) {
-        res.json({eroor: "error"});
+        res.json({error: "error"});
     } 
     else {
         try {
@@ -50,5 +52,6 @@ const postImageFile = async (req, res) => {
     }
 	
 }
+
 
 module.exports = {getImageFile, postImageFile};
