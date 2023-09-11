@@ -1,7 +1,7 @@
 require('dotenv').config()
 const {AwsClient} = require('aws4fetch');
 
-const {AWS} = require('aws-sdk');
+const {AWS} = require('@aws-sdk/client-s3');
 
 const R2_URL = process.env.R2_ENDPOINT;
 
