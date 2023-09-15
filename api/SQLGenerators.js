@@ -154,7 +154,7 @@ const generateGetSQL = (table, req) => {
     return returnJson;
 }
 
-const generateGetSQLFromQuery = (q, req) => {
+const generateGetSQLFromQuery = (q, req, sub) => {
 
     let order;
     let limit;
@@ -221,7 +221,7 @@ const generateGetSQLFromQuery = (q, req) => {
         }
     }
 
-    query += ')'
+    if (sub) query += ')'
     
     if (order) {
         

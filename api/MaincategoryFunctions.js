@@ -1,6 +1,6 @@
 require('dotenv').config()
 const mysql = require('mysql2');
-const { generateGetSQL, generatePostSQL, generatePutSQL, generateDeleteSQL } = require('./SQLGenerators');
+const { generateGetSQL, generatePostSQL, generatePutSQL, generateDeleteSQL, generateGetSQLFromQuery } = require('./SQLGenerators');
 
 const connect = (res, queryJSON) => {
     const connection = mysql.createConnection(process.env.DATABASE_URL)
@@ -73,4 +73,61 @@ const deleteMaincategoryCategory = (req, res) => {
     connect(res, queryJSON);
 };
 
-module.exports = {getMaincategory, postMaincategory, putMaincategory, deleteMaincategory, getMaincategoryCategory, postMaincategoryCategory, deleteMaincategoryCategory}
+const getMaincategoryExpanded = (req, res) => {
+    let params = req.query;
+    let maincategoryID = params.maincategory_id;
+
+    let query = "SELECT * FROM maincategory JOIN maincategory_categories ON maincategory.maincategory_id = maincategory_categories.maincategory_id JOIN category ON maincategory_categories.category_id = category.category_id";
+
+    let queryJSON = generateGetSQLFromQuery(query, req, false);
+
+    const connection = mysql.createConnection(process.env.DATABASE_URL)
+    connection.query(queryJSON.query, queryJSON.queryList, (err, results, fields) => {
+        if (!err) {
+            res.json({data: cleanResults(results)});
+        } else {
+            console.log(err);
+            res.status(400);
+            res.json({data: "error"});
+        }
+        
+    });
+    connection.end()
+};
+
+const cleanResults = (results) => {
+
+    let previousID = null;
+    let cleaned = null;
+    let cleanedResults = [];
+
+    for (let i in results) {
+        let maincategory = results[i];
+        let id = maincategory.maincategory_id;
+
+        if (id != previousID) {
+
+            if (cleaned) {
+                cleanedResults.push(cleaned);
+            }
+            previousID = id;
+
+            cleaned = {};
+            cleaned.maincategory_id = maincategory.maincategory_id;
+            cleaned.maincategory_name = maincategory.maincategory_name;
+            cleaned.maincategory_description = maincategory.maincategory_description;
+            cleaned.categories = [];
+        }
+
+        let row = maincategory;
+        if (row.category_id && !cleaned.categories.find(c => c.category_id == row.category_id)) cleaned.categories.push({
+            category_id: row.category_id,
+            category_name: row.category_name,
+            category_description: row.category_description
+        });
+    }
+    cleanedResults.push(cleaned);
+    return cleanedResults;
+}
+
+module.exports = {getMaincategory, postMaincategory, putMaincategory, deleteMaincategory, getMaincategoryCategory, postMaincategoryCategory, deleteMaincategoryCategory, getMaincategoryExpanded}
