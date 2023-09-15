@@ -147,12 +147,7 @@ const deleteProductImage = (req, res) => {
 const getProductExpanded = (req, res) => {
 
     let query = "SELECT * FROM product_expanded WHERE product_id IN (SELECT product_id FROM product_expanded";
-    let queryJSON = generateGetSQLFromQuery(query, req);
-    //queryJSON.query += ")";
-
-
-    /*let query = "SELECT * FROM product_expanded"
-    let queryJSON = generateGetSQLFromQuery(query, req);*/
+    let queryJSON = generateGetSQLFromQuery(query, req, true);
 
     console.log(queryJSON.query);
 
