@@ -98,6 +98,9 @@ app.put('/api/maincategory', (req, res) => {
 app.delete('/api/maincategory', (req, res) => {
     MaincategoryFunctions.deleteMaincategory(req, res);
 });
+app.get('/api/maincategory_expanded', (req, res) => {
+    MaincategoryFunctions.getMaincategoryExpanded(req, res);
+});
 
 // MAIN CATEGORY CATEGORIES     requires maincategory_id
 app.get('/api/maincategory_category', (req, res) => {

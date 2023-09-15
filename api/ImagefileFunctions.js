@@ -34,7 +34,22 @@ const getImageFile = async (req, res) => {
               }
             res.send(data.Body);
         } catch (err) {
-            res.status(500).json({ error: "Error getting image" });
+            const params2 = {
+                Bucket: process.env.R2_BUCKET,
+                Key: 'missing_image.png',
+            };
+            try {
+                const data2 = await s3.getObject(params2).promise();
+                let fileType = data2.Metadata['file-type'];
+                if (fileType) {
+                    res.setHeader('Content-Type', `image/${fileType.substring(1)}`);
+                  } else {
+                    res.setHeader('Content-Type', 'image/png');
+                  }
+                res.send(data2.Body);
+            } catch (err2) {
+                res.status(500).json({ error: "Error getting image" });
+            }
         }
     }
 }
