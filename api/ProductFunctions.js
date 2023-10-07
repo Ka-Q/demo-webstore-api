@@ -1,5 +1,7 @@
 require('dotenv').config()
 const mysql = require('mysql2');
+const escape = mysql.escape;
+const escapeId = mysql.escapeId;
 const { generateGetSQL, generatePostSQL, generatePutSQL, generateDeleteSQL, generateGetSQLFromQuery } = require('./SQLGenerators');
 
 const connect = (res, queryJSON) => {
@@ -164,6 +166,26 @@ const getProductExpanded = (req, res) => {
     connection.end()
 }
 
+const getProductExpandedV2 = (req, res) => {
+
+    let queryJSON = generateGetPEV2Query(req);
+
+    console.log(queryJSON.query);
+
+    const connection = mysql.createConnection(process.env.DATABASE_URL)
+    connection.query(queryJSON.query, queryJSON.queryList, (err, results, fields) => {
+        if (!err) {
+            res.json({data: cleanResults(results)});
+        } else {
+            res.status(400);
+            res.json({data: "error"});
+        }
+        
+    });
+    connection.end()
+}
+
+
 const cleanResults = (results) => {
 
     let previousID = null;
@@ -238,10 +260,108 @@ const cleanResults = (results) => {
     return cleanedResults;
 }
 
+const generateGetPEV2Query= (req) => {
+
+    let order;
+    let limit;
+    let offset;
+
+    if (req.query.order) {
+        order = req.query.order
+        delete req.query.order
+    }
+    if (req.query.limit) {
+        limit = req.query.limit
+        delete req.query.limit
+    }
+    if (req.query.offset) {
+        offset = req.query.offset
+        delete req.query.offset
+    }
+
+    let params = req.query;
+    let keys = Object.keys(params);
+
+    let query = `SELECT pe.* FROM (SELECT *, DENSE_RANK() OVER(ORDER BY `
+
+    if (order) {
+        let orderSplit = order.split(" ");
+        if (orderSplit.length == 1 || orderSplit.length == 2) {
+            query += escapeId(orderSplit[0]);
+        }
+        if (orderSplit.length == 2) {
+            if (orderSplit[1].toLowerCase() == 'desc') {
+                query += ` DESC`;
+            } else {
+                query += ` ASC`;
+            }
+            query += `, product_id`; 
+        }
+    } else {
+        query += 'product_id';
+    }
+    
+    query += `) as product_rank FROM product_expandedV2 WHERE (1=1)`;
+
+    let queryList = [];
+
+    for (let x in keys) {
+        let key = keys[x];
+        let val = params[key];
+
+        // Handle min_price and max_price separately
+        if (key === 'min_price') {
+            query += ` AND price >= ?`;
+            queryList.push(val);
+        } else if (key === 'max_price') {
+            query += ` AND price <= ?`;
+            queryList.push(val);
+        }
+
+        // If the value is an array, handle it separately
+        else if (Array.isArray(val)) {
+
+            val = val[0].split(',');
+
+            query += ` AND ?? IN (?)`;
+            queryList.push(key);
+            queryList.push(val.map(decodeURIComponent));
+        } 
+        // Otherwise, handle as before
+        else {
+            query += " AND ?? LIKE ?";
+            queryList.push(key);
+
+            // If foggy search
+            if (val.charAt(0) == '%' && val.charAt(val.length - 1) == '%') {
+                val = val.substring(1, val.length - 1)
+                val = decodeURIComponent(val)
+                val = "%" + val + "%"
+                queryList.push(val)
+            }
+            // Otherwise
+            else {
+                val = decodeURIComponent(val)
+                queryList.push(val)
+            }
+        }
+    }
+    
+    query += `) AS pe WHERE (1=1)`
+    if (limit && !offset) query += ` AND pe.product_rank <= ${escape(Number(limit))}`;
+    if (limit && offset) query += ` AND pe.product_rank BETWEEN ${escape(Number(offset) + 1)} AND ${escape(Number(offset) + Number(limit))}`
+
+    let returnJson = { params: params, keys: Object.keys(params), query: query, queryList: queryList };
+    
+    console.log(returnJson);
+    
+    return returnJson;
+}
+
 module.exports = {
     getProduct, postProduct, putProduct, deleteProduct, 
     getProductManufacturer, postProductManufacturer, deleteProductManufacturer, 
     getProductCategory, postProductCategory, deleteProductCategory,
     getProductImage, postProductImage, deleteProductImage,
-    getProductExpanded
+    getProductExpanded, getProductExpandedV2
 }
