@@ -168,6 +168,11 @@ app.get('/api/product_expanded', (req, res) => {
     ProductFunctions.getProductExpanded(req, res);
 });
 
+//PRODUCT EXPANDED V2
+app.get('/api/product_expanded_v2', (req, res) => {
+    ProductFunctions.getProductExpandedV2(req, res);
+});
+
 // PRODUCT MANUFACTURERS    requires product_id
 app.get('/api/product_manufacturer', (req, res) => {
     ProductFunctions.getProductManufacturer(req, res);
