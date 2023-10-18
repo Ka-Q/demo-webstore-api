@@ -74,10 +74,7 @@ const deleteMaincategoryCategory = (req, res) => {
 };
 
 const getMaincategoryExpanded = (req, res) => {
-    let params = req.query;
-    let maincategoryID = params.maincategory_id;
-
-    let query = "SELECT * FROM maincategory JOIN maincategory_categories ON maincategory.maincategory_id = maincategory_categories.maincategory_id JOIN category ON maincategory_categories.category_id = category.category_id";
+    let query = "SELECT * FROM maincategory LEFT JOIN maincategory_categories ON maincategory.maincategory_id = maincategory_categories.maincategory_id LEFT JOIN category ON maincategory_categories.category_id = category.category_id LEFT JOIN image ON maincategory.image_id = image.image_id";
 
     let queryJSON = generateGetSQLFromQuery(query, req, false);
 
@@ -116,6 +113,11 @@ const cleanResults = (results) => {
             cleaned.maincategory_id = maincategory.maincategory_id;
             cleaned.maincategory_name = maincategory.maincategory_name;
             cleaned.maincategory_description = maincategory.maincategory_description;
+            cleaned.image_id = maincategory.image_id;
+            cleaned.image_source = maincategory.image_source;
+            cleaned.image_type_id = maincategory.image_type_id
+            cleaned.image_description = maincategory.image_description
+            cleaned.image_link = maincategory.image_link
             cleaned.categories = [];
         }
 

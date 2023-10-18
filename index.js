@@ -126,6 +126,9 @@ app.put('/api/category', (req, res) => {
 app.delete('/api/category', (req, res) => {
     CategoryFunctions.deleteCategory(req, res);
 });
+app.get('/api/category_expanded', (req, res) => {
+    CategoryFunctions.getCategoryExpanded(req, res);
+});
 
 // CATEGORY PRODUCTS    requires category_id
 app.get('/api/category_product', (req, res) => {
