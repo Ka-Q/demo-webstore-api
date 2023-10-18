@@ -1,6 +1,6 @@
 require('dotenv').config()
 const mysql = require('mysql2');
-const { generateGetSQL, generatePostSQL, generatePutSQL, generateDeleteSQL } = require('./SQLGenerators');
+const { generateGetSQL, generatePostSQL, generatePutSQL, generateDeleteSQL, generateGetSQLFromQuery } = require('./SQLGenerators');
 
 const connect = (res, queryJSON) => {
     const connection = mysql.createConnection(process.env.DATABASE_URL)
@@ -18,6 +18,14 @@ const connect = (res, queryJSON) => {
 
 const getCategory = (req, res) => {
     let queryJSON = generateGetSQL('category', req);
+    connect(res, queryJSON);
+};
+
+const getCategoryExpanded = (req, res) => {
+
+    let query = "SELECT * FROM category LEFT JOIN image ON category.image_id = image.image_id";
+
+    let queryJSON = generateGetSQLFromQuery(query, req);
     connect(res, queryJSON);
 };
 
@@ -72,4 +80,4 @@ const deleteCategoryProduct = (req, res) => {
     connect(res, queryJSON);
 };
 
-module.exports = {getCategory, postCategory, putCategory, deleteCategory, getCategoryProduct, postCategoryProduct, deleteCategoryProduct}
+module.exports = {getCategory, getCategoryExpanded, postCategory, putCategory, deleteCategory, getCategoryProduct, postCategoryProduct, deleteCategoryProduct}
