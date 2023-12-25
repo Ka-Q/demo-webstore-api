@@ -209,6 +209,7 @@ const cleanResults = (results) => {
             cleaned.product_description = product.product_description;
             cleaned.price = product.price;
             cleaned.discount = product.discount;
+            cleaned.product_stock = product.product_stock;
             if (product.event_id) {
                 cleaned.event = {
                     event_id: product.event_id,
