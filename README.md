@@ -3,6 +3,8 @@ An Express backend for my Demo Webstore project.
 
 Note that the project is still heavily WIP, so consistency, security, and polish is not there yet. This is a crude draft.
 
+The database gets reset on a regular basis to delete any modifications made in testing.
+
 ## Features
 - Support for limiting and ordering results based on a parameter
 - User authentication using bcrypt to secure passwords and an express-session token to keep the user logged in
