@@ -1,7 +1,15 @@
-# demo-webstore-api
+# demo-webstore-api (WIP)
 An Express backend for my Demo Webstore project. 
 
 Note that the project is still heavily WIP, so consistency, security, and polish is not there yet. This is a crude draft.
+
+## Features
+- Support for limiting and ordering results based on a parameter
+- User authentication using bcrypt to secure passwords and an express-session token to keep the user logged in
+- File uploads using express-fileupload
+
+- Everything except the files are stored in a mysql database hosted on plantetscale.
+- Uploaded files are stored in a Cloudflare R2 bucket
 
 ## Usage
 
