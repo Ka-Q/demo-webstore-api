@@ -30,7 +30,7 @@ const PORT = 5000;
 // CORS app.use(cors());
 
 const allowed = {
-    origin: ["http://localhost:3000","https://dws-front.netlify.app"],
+    origin: ["http://localhost:3000","https://dws-front.netlify.app", "dws.akulaurila.com"],
     default: "http://localhost:3000"
   }
 
