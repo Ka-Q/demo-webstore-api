@@ -28,8 +28,15 @@ const app = express();
 const PORT = 5000;
 
 // CORS app.use(cors());
+
+const allowed = {
+    origin: ["http://localhost:3000","https://dws-front.netlify.app"],
+    default: "http://localhost:3000"
+  }
+
 app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "http://localhost:3000"); 
+    const origin = allowed.origin.includes(req.header('origin').toLowerCase()) ? req.headers.origin : allowed.default;
+    res.header("Access-Control-Allow-Origin", origin); 
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     res.header("Access-Control-Allow-Credentials", true);
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
