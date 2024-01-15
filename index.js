@@ -67,6 +67,8 @@ const  sessionStore = new mysqlStore(options);*/
 const dbConnection = mysql.createConnection(process.env.DATABASE_URL);
 const sessionStore = new mysqlStore({connectionLimit: 10}, dbConnection);
 
+app.set("trust proxy", 1);
+
 app.use(session({
     key: "demo_ws_session",
     secret: process.env.SESSION_SECRET,
